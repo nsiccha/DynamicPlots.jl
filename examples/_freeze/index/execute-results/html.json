@@ -1,0 +1,11 @@
+{
+  "hash": "a4d46a46989c8257ceb75901d7379b42",
+  "result": {
+    "markdown": "---\ntitle: Basic functionality\nexecute:\n  daemon: 999999\n---\n\n::: {.cell execution_count=1}\n``` {.julia .cell-code}\nusing DynamicObjects, DynamicPlots\n\nx = randn(100)\ny = x.^2\n\nFigure([\n  Line(x, y) Scatter(x, y) Line(x, y)+Scatter(x, y)\n]).markdown\n\n```\n\n::: {.cell-output .cell-output-display execution_count=5}\n```\n\"![](figs/17781430461351376590.png)\"\n```\n:::\n:::\n\n\n![](figs/16325733959399385369.png)\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

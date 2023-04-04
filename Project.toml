@@ -4,6 +4,8 @@ authors = ["Nikolas Siccha and contributors"]
 version = "0.1.0"
 
 [deps]
+DynamicObjects = "23d02862-63fe-4c6e-8fdb-1d52cbbd39d5"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 
 [compat]
 julia = "1"

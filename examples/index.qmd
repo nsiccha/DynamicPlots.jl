@@ -1,0 +1,20 @@
+---
+title: Basic functionality
+jupyter: julia-1.8
+execute:
+  daemon: 999999
+---
+
+```{julia}
+using DynamicObjects, DynamicPlots
+
+x = randn(100)
+y = x.^2
+
+Figure([
+  Line(x, y) Scatter(x, y) Line(x, y)+Scatter(x, y)
+]).markdown
+ 
+```                      
+
+![](figs/16325733959399385369.png)
