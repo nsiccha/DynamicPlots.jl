@@ -6,15 +6,12 @@ execute:
 ---
 
 ```{julia}
-using DynamicObjects, DynamicPlots
+using DynamicObjects, DynamicPlots, Markdown
 
-x = randn(100)
+x = -10:10
 y = x.^2
 
 Figure([
   Line(x, y) Scatter(x, y) Line(x, y)+Scatter(x, y)
-]).markdown
- 
-```                      
-
-![](figs/16325733959399385369.png)
+], alt_text="My example figure.")
+```                       

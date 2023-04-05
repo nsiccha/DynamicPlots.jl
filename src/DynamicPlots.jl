@@ -3,7 +3,7 @@ module DynamicPlots
 export Plot, Figure, PlotSum, Line, Scatter, EmptyPlot
 using DynamicObjects
 using Plots
-
+import Markdown
 
 """
 A common base type for plots.
@@ -16,14 +16,16 @@ figure!(fig, ::Plot) = fig
 Base.adjoint(what::Plot) = what
 dir(what::Plot) = "figs"
 path(what::Plot) = "$(what.dir)/$(hash(what)).png"
+alt_text(what::Plot) = ""
 function markdown(what::Plot)
     if !isfile(what.path)
         if !isdir(what.dir)
             mkpath(what.dir)
         end
+        println("Saving $(what.path).")
         png(what.figure, what.path)
     end
-    "![]($(what.path))" 
+    Markdown.parse("![$(what.alt_text)]($(what.path))")
 end
 
 @dynamic_object Figure <: Plot plots::AbstractArray
@@ -63,7 +65,7 @@ PairPlot(what, i, j) = i < j ? ScatterPlot(
 
 # What is actually the best way to show plots?
 
-# Base.show(io::IO, what::Plot) = display(what.markdown) 
+Base.show(io::IOContext{IOBuffer}, what::Plot) = display(what.markdown)
 # Base.display(how, what::Plot) = display(what.markdown)
 end
   

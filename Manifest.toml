@@ -2,7 +2,7 @@
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "3e2a720b7ad546cf40e57b7132fad16167807d90"
+project_hash = "d205d33e581ed05d5ee22aa1ccd430e305b9cf0e"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -121,7 +121,7 @@ version = "1.6.0"
 
 [[deps.DynamicObjects]]
 deps = ["Serialization"]
-git-tree-sha1 = "047651b4b8e26e72362831a1fad676f60da02eb3"
+git-tree-sha1 = "148300521842e0479d2c2b7a53d0985704f651bc"
 repo-rev = "main"
 repo-url = "https://github.com/nsiccha/DynamicObjects.jl"
 uuid = "23d02862-63fe-4c6e-8fdb-1d52cbbd39d5"
