@@ -39,7 +39,8 @@ figure_kwargs(what::Figure) = (
     layout=(what.no_rows, what.no_cols), 
     size=(what.no_cols * what.plot_width, what.no_rows * what.plot_height)
 )
-initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs...)
+extra_figure_kwargs(what::Figure) = NamedTuple()
+initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs..., what.extra_figure_kwargs...)
 
 @dynamic_object PlotSum <: Plot summands::AbstractArray
 # no_plots(what::PlotSum) = length(what.summands)
