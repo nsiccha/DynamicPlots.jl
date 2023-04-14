@@ -41,6 +41,9 @@ figure_kwargs(what::Figure) = (
 )
 extra_figure_kwargs(what::Figure) = NamedTuple()
 initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs..., what.extra_figure_kwargs...)
+Base.adjoint(what::Figure) = DynamicObjects.update(what, plots=what.plots')
+Base.:+(lhs::Figure, rhs::Figure) = DynamicObjects.update(lhs, plots=lhs.plots .+ rhs.plots)
+
 
 @dynamic_object PlotSum <: Plot summands::AbstractArray
 # no_plots(what::PlotSum) = length(what.summands)
