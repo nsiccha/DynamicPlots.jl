@@ -57,6 +57,12 @@ figure!(fig, what::Line) = (plot!(fig, what.x, what.y, label=""); fig)
 @dynamic_object Scatter <: Plot x y
 figure!(fig, what::Scatter) = (scatter!(fig, what.x, what.y, label=""); fig) 
 
+@dynamic_object Plotter <: Plot func::Function
+plot_args(what::Plotter) = Tuple([])
+plot_kwargs(what::Plotter) = NamedTuple()
+figure!(fig, what::Plotter) = (what.func(fig, what.plot_args...; label="", what.plot_kwargs...); fig) 
+
+
 @dynamic_object EmptyPlot <: Plot x y
 initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, yticks=false)
 figure!(fig, ::EmptyPlot) = fig
