@@ -44,26 +44,26 @@ initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs..., wha
 Base.adjoint(what::Figure) = DynamicObjects.update(what, plots=what.plots')
 Base.:+(lhs::Figure, rhs::Figure) = DynamicObjects.update(lhs, plots=lhs.plots .+ rhs.plots)
 
+@dynamic_object Plotter <: Plot func::Function
+plot_args(what::Plot) = Tuple([])
+plot_kwargs(what::Plot) = NamedTuple()
+figure!(fig, what::Plotter) = (what.func(fig, what.plot_args...; label="", what.plot_kwargs...); fig) 
+
 
 @dynamic_object PlotSum <: Plot summands::AbstractArray
 # no_plots(what::PlotSum) = length(what.summands)
 function figure!(fig, what::PlotSum)
-    for summand in what.summands figure!(fig, summand) end
+    for summand in what.summands figure!(fig, summand; what.plot_kwargs...) end
     fig
 end
 summands(what::Plot) = [what]
 Base.:+(lhs::Plot, rhs::Plot) = PlotSum([lhs.summands..., rhs.summands...])
 
 @dynamic_object Line <: Plot x y
-figure!(fig, what::Line) = (plot!(fig, what.x, what.y, label=""); fig)
+figure!(fig, what::Line) = (plot!(fig, what.x, what.y, label=""; what.plot_kwargs...); fig)
 
 @dynamic_object Scatter <: Plot x y
-figure!(fig, what::Scatter) = (scatter!(fig, what.x, what.y, label=""); fig) 
-
-@dynamic_object Plotter <: Plot func::Function
-plot_args(what::Plotter) = Tuple([])
-plot_kwargs(what::Plotter) = NamedTuple()
-figure!(fig, what::Plotter) = (what.func(fig, what.plot_args...; label="", what.plot_kwargs...); fig) 
+figure!(fig, what::Scatter) = (scatter!(fig, what.x, what.y, label=""; what.plot_kwargs...); fig) 
 
 
 @dynamic_object EmptyPlot <: Plot x y
