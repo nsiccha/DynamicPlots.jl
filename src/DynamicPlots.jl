@@ -1,6 +1,6 @@
 module DynamicPlots
 
-export Plot, Figure, PlotSum, Line, Scatter, EmptyPlot
+export Plot, Figure, PlotSum, Line, Scatter, EmptyPlot#, PairPlot
 using DynamicObjects
 using Plots
 import Markdown
@@ -33,9 +33,11 @@ subplots(what::Figure) = figure.(what.plots')
 no_plots(what::Figure) = length(what.plots)
 no_rows(what::Figure) = size(what.plots, 1)
 no_cols(what::Figure) = size(what.plots, 2)
+plot_width(what::Figure) = 400
+plot_height(what::Figure) = what.plot_width
 figure_kwargs(what::Figure) = (
     layout=(what.no_rows, what.no_cols), 
-    size=(800, 800 * what.no_rows / what.no_cols)
+    size=(what.no_cols * what.plot_width, what.no_rows * what.plot_height)
 )
 initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs...)
 
@@ -59,9 +61,7 @@ initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, ytick
 figure!(fig, ::EmptyPlot) = fig
 
 
-PairPlot(what, i, j) = i < j ? ScatterPlot(
-    what.unconstrained_draws[:, i], what.unconstrained_draws[:, j]
-) : EmptyPlot()
+
 
 # What is actually the best way to show plots?
 
