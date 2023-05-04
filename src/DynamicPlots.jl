@@ -13,13 +13,16 @@ A common base type for plots.
 
 initial_figure(::Plot) = plot()
 figure(what::Plot) = figure!(initial_figure(what), what)
-figure!(fig, ::Plot) = fig
+# figure!(fig, ::Plot) = fig
+figure!(fig, what::Plot) = (what.func(fig, what.plot_args...; what.plot_kwargs...); fig) 
+do_nothing(args...; kwargs...) = nothing
+func(::Plot) = do_nothing
+plot_args(::Plot) = Tuple([])
+plot_kwargs(::Plot) = (label="",)
 Base.adjoint(what::Plot) = what
 dir(what::Plot) = "figs"
 path(what::Plot) = "$(what.dir)/$(hash(what)).png"
 alt_text(what::Plot) = ""
-plot_args(what::Plot) = Tuple([])
-plot_kwargs(what::Plot) = (label="",)
 
 function markdown(what::Plot)
     if !isfile(what.path)
@@ -48,29 +51,32 @@ Base.adjoint(what::Figure) = DynamicObjects.update(what, plots=what.plots')
 Base.:+(lhs::Figure, rhs::Figure) = DynamicObjects.update(lhs, plots=lhs.plots .+ rhs.plots)
 
 @dynamic_object Plotter <: Plot func::Function plot_args
-figure!(fig, what::Plotter) = (what.func(fig, what.plot_args...; what.plot_kwargs...); fig) 
+# figure!(fig, what::Plotter) = (what.func(fig, what.plot_args...; what.plot_kwargs...); fig) 
 
 @dynamic_object PlotSum <: Plot summands::AbstractArray
-function figure!(fig, what::PlotSum)
-    for summand in what.summands figure!(fig, summand, what.plot_args...; what.plot_kwargs...) end
+function figure!(fig, what::PlotSum, args...; kwargs...)
+    for summand in what.summands 
+        figure!(fig, summand, what.plot_args..., args...; what.plot_kwargs..., kwargs...) 
+    end
     fig
 end
 summands(what::Plot) = [what]
 Base.:+(lhs::Plot, rhs::Plot) = PlotSum([lhs.summands..., rhs.summands...])
 
 @dynamic_object Line <: Plot x y
-figure!(fig, what::Line) = (plot!(fig, what.x, what.y, what.plot_args...; what.plot_kwargs...); fig)
+func(what::Line) = plot!
+plot_args(what::Line) = (what.x, what.y)
 
 @dynamic_object Scatter <: Plot x y
-figure!(fig, what::Scatter) = (scatter!(fig, what.x, what.y, what.plot_args...; what.plot_kwargs...); fig) 
+func(what::Scatter) = scatter!
+plot_args(what::Scatter) = (what.x, what.y)
 
 @dynamic_object Histogram <: Plot x::AbstractArray
-figure!(fig, what::Histogram) = (histogram!(fig, what.x, what.plot_args...; what.plot_kwargs...); fig) 
-
+func(what::Histogram) = histogram!
+plot_args(what::Histogram) = (what.x, )
 
 @dynamic_object EmptyPlot <: Plot x y
 initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, yticks=false)
-figure!(fig, ::EmptyPlot) = fig
 
 end
   
