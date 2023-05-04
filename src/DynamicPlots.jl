@@ -14,7 +14,10 @@ A common base type for plots.
 initial_figure(::Plot) = plot()
 figure(what::Plot) = figure!(initial_figure(what), what)
 # figure!(fig, ::Plot) = fig
-figure!(fig, what::Plot) = (what.func(fig, what.plot_args...; what.plot_kwargs...); fig) 
+figure!(fig, what::Plot, args...; kwargs...) = (
+    what.func(fig, what.plot_args..., args...; what.plot_kwargs..., kwargs...); 
+    fig
+) 
 do_nothing(args...; kwargs...) = nothing
 func(::Plot) = do_nothing
 plot_args(::Plot) = Tuple([])
