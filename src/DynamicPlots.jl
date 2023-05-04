@@ -64,8 +64,8 @@ figure!(fig, what::Line) = (plot!(fig, what.x, what.y, what.plot_args...; what.p
 @dynamic_object Scatter <: Plot x y
 figure!(fig, what::Scatter) = (scatter!(fig, what.x, what.y, what.plot_args...; what.plot_kwargs...); fig) 
 
-@dynamic_object Histogram <: Plot x y
-figure!(fig, what::Scatter) = (histogram!(fig, what.x, what.plot_args...; what.plot_kwargs...); fig) 
+@dynamic_object Histogram <: Plot x::AbstractArray
+figure!(fig, what::Histogram) = (histogram!(fig, what.x, what.plot_args...; what.plot_kwargs...); fig) 
 
 
 @dynamic_object EmptyPlot <: Plot x y
