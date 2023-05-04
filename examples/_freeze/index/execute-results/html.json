@@ -1,7 +1,7 @@
 {
-  "hash": "89e6ebd4b4a915de229acb042f438e89",
+  "hash": "b92c9990366d7f2f185f8fc8630d935b",
   "result": {
-    "markdown": "---\ntitle: Basic functionality\nexecute:\n  daemon: 999999\n---\n\n::: {.cell execution_count=1}\n``` {.julia .cell-code}\nusing DynamicObjects, DynamicPlots, Markdown\n\nx = -10:10\ny = x.^2\n\nFigure([\n  Line(x, y) Scatter(x, y) Line(x, y)+Scatter(x, y)\n], alt_text=\"My example figure.\")\n```\n\n::: {.cell-output .cell-output-stderr}\n```\n┌ Info: Precompiling DynamicPlots [a7562ee3-23e5-4f09-9cc3-be128489fa0b]\n└ @ Base loading.jl:1664\n```\n:::\n\n::: {.cell-output .cell-output-display}\n![My example figure.](figs/18303578201820748428.png)\n\n:::\n\n::: {.cell-output .cell-output-display execution_count=2}\n```\n\n```\n:::\n:::\n\n\n",
+    "markdown": "---\ntitle: Basic functionality\nexecute:\n  daemon: 999999\n---\n\n::: {.cell execution_count=1}\n``` {.julia .cell-code}\nusing DynamicPlots\n\nx = -10:10\ny = x.^2\n\nFigure([\n  Line(x, y) Scatter(x, y) Line(x, y)+Scatter(x, y)\n], alt_text=\"My example figure.\")\n```\n\n::: {.cell-output .cell-output-display execution_count=2}\n![My example figure.](figs/18303578201820748428.png)\n\n:::\n:::\n\n\n",
     "supporting": [
       "index_files"
     ],

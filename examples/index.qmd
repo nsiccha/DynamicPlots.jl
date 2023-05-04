@@ -6,7 +6,7 @@ execute:
 ---
 
 ```{julia}
-using DynamicObjects, DynamicPlots, Markdown
+using DynamicPlots
 
 x = -10:10
 y = x.^2
