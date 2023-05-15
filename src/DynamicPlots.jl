@@ -23,8 +23,11 @@ func(::Plot) = do_nothing
 plot_args(::Plot) = Tuple([])
 plot_kwargs(::Plot) = (label="",)
 Base.adjoint(what::Plot) = what
-dir(what::Plot) = "figs"
-path(what::Plot) = "$(what.dir)/$(hash(what)).png"
+set_figs_path!(path::AbstractString) = (ENV["DYNAMIC_FIGS"] = path)
+dir(::Plot) = get(ENV, "DYNAMIC_FIGS", "/figs")
+stem(what::Plot) = hash(what)
+extension(what::Plot) = "png"
+path(what::Plot) = "$(what.dir)/$(what.stem).$(what.extension)"
 alt_text(what::Plot) = ""
 
 function markdown(what::Plot)
@@ -59,7 +62,7 @@ Base.:+(lhs::Figure, rhs::Figure) = DynamicObjects.update(lhs, plots=lhs.plots .
 @dynamic_object PlotSum <: Plot summands::AbstractArray
 function figure!(fig, what::PlotSum, args...; kwargs...)
     for summand in what.summands 
-        figure!(fig, summand, what.plot_args..., args...; what.plot_kwargs..., kwargs...) 
+        figure!(fig, summand, what.plot_args..., args...; kwargs...) 
     end
     fig
 end
