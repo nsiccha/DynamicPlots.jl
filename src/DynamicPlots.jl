@@ -24,7 +24,7 @@ plot_args(::Plot) = Tuple([])
 plot_kwargs(::Plot) = (label="",)
 Base.adjoint(what::Plot) = what
 set_figs_path!(path::AbstractString) = (ENV["DYNAMIC_FIGS"] = path)
-dir(::Plot) = get(ENV, "DYNAMIC_FIGS", "/figs")
+dir(::Plot) = get(ENV, "DYNAMIC_FIGS", joinpath(pwd(), "figs"))
 stem(what::Plot) = hash(what)
 extension(what::Plot) = "png"
 path(what::Plot) = "$(what.dir)/$(what.stem).$(what.extension)"
