@@ -10,6 +10,7 @@ import Markdown
 A common base type for plots.
 """
 @dynamic_type Plot 
+Base.show(io::IO, mime::MIME"text/markdown", what::Plot) = show(io, mime, what.markdown)
 
 initial_figure(::Plot) = plot()
 figure(what::Plot) = figure!(initial_figure(what), what)
@@ -25,9 +26,12 @@ plot_kwargs(::Plot) = (label="",)
 Base.adjoint(what::Plot) = what
 set_figs_path!(path::AbstractString) = (ENV["DYNAMIC_FIGS"] = path)
 dir(::Plot) = get(ENV, "DYNAMIC_FIGS", joinpath(pwd(), "figs"))
+md_dir(::Plot) = "/figs"
 stem(what::Plot) = hash(what)
 extension(what::Plot) = "png"
-path(what::Plot) = "$(what.dir)/$(what.stem).$(what.extension)"
+Base.basename(what::Plot) = "$(what.stem).$(what.extension)"
+path(what::Plot) = joinpath(what.dir, what.basename)
+md_path(what::Plot) = joinpath(what.md_dir, what.basename)
 alt_text(what::Plot) = ""
 
 function markdown(what::Plot)
@@ -36,9 +40,8 @@ function markdown(what::Plot)
         println("Saving $(what.path).")
         png(what.figure, what.path)
     end
-    Markdown.parse("![$(what.alt_text)]($(what.path))")
+    Markdown.parse("![$(what.alt_text)]($(what.md_path))")
 end
-Base.show(io::IO, mime::MIME"text/markdown", what::Plot) = show(io, mime, what.markdown)
 
 @dynamic_object Figure <: Plot plots::AbstractArray
 subplots(what::Figure) = figure.(what.plots')
