@@ -58,6 +58,8 @@ extra_figure_kwargs(what::Figure) = NamedTuple()
 initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs..., what.extra_figure_kwargs...)
 Base.adjoint(what::Figure) = DynamicObjects.update(what, plots=what.plots')
 Base.:+(lhs::Figure, rhs::Figure) = DynamicObjects.update(lhs, plots=lhs.plots .+ rhs.plots)
+Base.vcat(figures::Figure...) = DynamicObjects.update(figures[1], plots=vcat(getproperty.(figures, :plots)))
+Base.hcat(figures::Figure...) = DynamicObjects.update(figures[1], plots=hcat(getproperty.(figures, :plots)))
 
 @dynamic_object Plotter <: Plot func::Function plot_args
 # figure!(fig, what::Plotter) = (what.func(fig, what.plot_args...; what.plot_kwargs...); fig) 
