@@ -1,6 +1,6 @@
 ---
 title: Basic functionality
-jupyter: julia-1.8
+jupyter: julia-1.9
 execute:
   daemon: 999999
 ---
@@ -14,4 +14,4 @@ y = x.^2
 Figure([
   Line(x, y) Scatter(x, y) Line(x, y)+Scatter(x, y)
 ], alt_text="My example figure.")
-```                       
+```

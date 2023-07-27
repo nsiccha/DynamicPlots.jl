@@ -1,6 +1,7 @@
 module DynamicPlots
 
-export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot
+export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot 
+export PairPlot, PairPlots, ECDFPlot
 # export PairPlot
 using DynamicObjects
 using Plots
@@ -11,9 +12,10 @@ A common base type for plots.
 """
 @dynamic_type Plot 
 Base.show(io::IO, mime::MIME"text/markdown", what::Plot) = show(io, mime, what.markdown)
+Base.show(io::IO, mime::MIME"image/png", what::Plot) = show(io, mime, what.figure)
 
 initial_figure(::Plot) = plot()
-figure(what::Plot) = figure!(initial_figure(what), what)
+figure(what::Plot) = figure!(what.initial_figure, what)
 # figure!(fig, ::Plot) = fig
 figure!(fig, what::Plot, args...; kwargs...) = (
     what.func(fig, what.plot_args..., args...; what.plot_kwargs..., kwargs...); 
@@ -22,7 +24,23 @@ figure!(fig, what::Plot, args...; kwargs...) = (
 do_nothing(args...; kwargs...) = nothing
 func(::Plot) = do_nothing
 plot_args(::Plot) = Tuple([])
-plot_kwargs(::Plot) = (label="",)
+auto_plot_keys(::Plot) = [
+    :label, 
+    :alpha, :color, :marker, :markersize, :markerstrokewidth,
+    :xaxis, :yaxis, :xscale, :yscale, :xlabel, :ylabel,
+    :legend, :colorbar, :title, :plot_title
+]
+default_plot_kwargs(::Plot) = (label="", markerstrokewidth=0)
+auto_plot_kwargs(what::Plot) = (;[
+    [key, getproperty(what, key)] 
+    for key in what.auto_plot_keys if hasproperty(what, key)
+]...)
+extra_plot_kwargs(::Plot) = NamedTuple()
+plot_kwargs(what::Plot) = merge(
+    what.default_plot_kwargs, 
+    what.auto_plot_kwargs, 
+    what.extra_plot_kwargs
+)
 Base.adjoint(what::Plot) = what
 set_figs_path!(path::AbstractString) = (ENV["DYNAMIC_FIGS"] = path)
 dir(::Plot) = get(ENV, "DYNAMIC_FIGS", joinpath(pwd(), "figs"))
@@ -50,12 +68,26 @@ no_rows(what::Figure) = size(what.plots, 1)
 no_cols(what::Figure) = size(what.plots, 2)
 plot_width(what::Figure) = 400
 plot_height(what::Figure) = what.plot_width
-figure_kwargs(what::Figure) = (
+
+auto_figure_keys(::Figure) = [
+    :layout, :size
+]
+default_figure_kwargs(what::Figure) = (
     layout=(what.no_rows, what.no_cols), 
     size=(what.no_cols * what.plot_width, what.no_rows * what.plot_height)
 )
-extra_figure_kwargs(what::Figure) = NamedTuple()
-initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs..., what.extra_figure_kwargs...)
+auto_figure_kwargs(what::Figure) = (;[
+    [key, getproperty(what, key)] 
+    for key in what.auto_figure_keys if hasproperty(what, key)
+]...)
+extra_figure_kwargs(::Figure) = NamedTuple()
+figure_kwargs(::Plot) = NamedTuple()
+figure_kwargs(what::Figure) = merge(
+    what.default_figure_kwargs, 
+    what.auto_figure_kwargs, 
+    what.extra_figure_kwargs
+)
+initial_figure(what::Figure) = plot(what.subplots...; what.figure_kwargs...)
 Base.adjoint(what::Figure) = DynamicObjects.update(what, plots=what.plots')
 Base.:+(lhs::Figure, rhs::Figure) = DynamicObjects.update(lhs, plots=lhs.plots .+ rhs.plots)
 Base.vcat(figures::Figure...) = DynamicObjects.update(figures[1], plots=vcat(getproperty.(figures, :plots)...))
@@ -75,19 +107,43 @@ summands(what::Plot) = [what]
 Base.:+(lhs::Plot, rhs::Plot) = PlotSum([lhs.summands..., rhs.summands...])
 
 @dynamic_object Line <: Plot x y
-func(what::Line) = plot!
+func(::Line) = plot!
 plot_args(what::Line) = (what.x, what.y)
 
 @dynamic_object Scatter <: Plot x y
-func(what::Scatter) = scatter!
+func(::Scatter) = scatter!
 plot_args(what::Scatter) = (what.x, what.y)
 
 @dynamic_object Histogram <: Plot x::AbstractArray
-func(what::Histogram) = histogram!
+func(::Histogram) = histogram!
 plot_args(what::Histogram) = (what.x, )
 
 @dynamic_object EmptyPlot <: Plot x y
 initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, yticks=false)
+
+ECDFPlot(x::AbstractVector; kwargs...) = Line(sort(x), range(0, 1, length(x)); title="ECDF", kwargs...)
+
+PairPlot(samples::AbstractMatrix, i, j; histogram=true, kwargs...) = if i < j 
+    EmptyPlot() + Scatter(samples[i, :], samples[j, :], alpha=.25, kwargs...)
+elseif histogram && i == j 
+    Histogram(samples[i,:]) 
+else
+    EmptyPlot()
+end
+
+PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), show_svd=true, kwargs...) = if show_svd 
+    m = mean(samples, dims=2)
+    U, S, V = svd(cov(samples'))
+    svd_samples = Diagonal(sqrt.(S)) \ U' * (samples .- m)
+    PairPlots(samples; n=n, show_svd=false, kwargs...) + 
+    PairPlots(svd_samples; n=n, show_svd=false, histogram=false, kwargs...)'
+else 
+    idxs = trunc.(Int, range(1, size(samples, 1), n))
+    Figure([
+        PairPlot(samples, i, j; kwargs...)
+        for i in idxs, j in idxs
+    ])
+end
 
 end
   
