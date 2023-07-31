@@ -5,7 +5,7 @@ export PairPlot, PairPlots, ECDFPlot
 # export PairPlot
 using DynamicObjects
 using Plots
-using Statistics
+using Statistics, LinearAlgebra
 import Markdown
 
 """
