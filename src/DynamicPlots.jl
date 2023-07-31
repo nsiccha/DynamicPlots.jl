@@ -124,7 +124,7 @@ initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, ytick
 
 ECDFPlot(x::AbstractVector; kwargs...) = Line(sort(x), range(0, 1, length(x)); title="ECDF", kwargs...)
 
-PairPlot(samples::AbstractMatrix, i, j; histogram=true, kwargs...) = if i < j 
+PairPlot(samples::AbstractMatrix, i, j; histogram=true, kwargs...) = if i > j 
     EmptyPlot() + Scatter(samples[i, :], samples[j, :], alpha=.25, kwargs...)
 elseif histogram && i == j 
     Histogram(samples[i,:]) 
