@@ -133,7 +133,7 @@ else
     EmptyPlot()
 end
 
-PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), idxs=trunc.(Int, range(1, size(samples, 1), n)), show_svd=true, kwargs...) = if show_svd 
+PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), idxs=trunc.(Int, range(1, size(samples, 1), n)), show_svd=false, kwargs...) = if show_svd 
     m = mean(samples, dims=2)
     U, S, V = svd(cov(samples'))
     svd_samples = Diagonal(sqrt.(S)) \ U' * (samples .- m)
@@ -142,7 +142,7 @@ PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), idxs=trunc.(Int, r
 else 
     Figure([
         PairPlot(samples, i, j; kwargs...)
-        for i in idxs, j in idxs
+        for j in idxs, i in idxs
     ])
 end
 
