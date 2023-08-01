@@ -142,14 +142,14 @@ PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), idxs=trunc.(Int, r
 else 
     Figure([
         PairPlot(samples, i, j; kwargs...)
-        for j in idxs, i in idxs
+        for i in idxs, j in idxs
     ])
 end
 
-add_description(f, d) = begin 
+add_description(f::Figure, d::AbstractString) = begin 
     figure_kwargs = f.figure_kwargs
     plot_title = d
-    plot_title_height = 40 * count("\n", d)
+    plot_title_height = 40 * (2+count("\n", d))
     size = (figure_kwargs.size[1], figure_kwargs.size[2] + plot_title_height)
     update(f, figure_kwargs=(
         f.figure_kwargs..., 
@@ -160,7 +160,7 @@ add_description(f, d) = begin
         size=size
     ))
 end
-add_description(d) = Base.Fix2(add_description, d)
+add_description(d::AbstractString) = Base.Fix2(add_description, d)
 
 end
   
