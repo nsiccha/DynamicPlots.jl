@@ -2,6 +2,7 @@ module DynamicPlots
 
 export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot 
 export PairPlot, PairPlots, ECDFPlot
+export add_description
 # export PairPlot
 using DynamicObjects
 using Plots
@@ -132,19 +133,34 @@ else
     EmptyPlot()
 end
 
-PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), show_svd=true, kwargs...) = if show_svd 
+PairPlots(samples::AbstractMatrix; n=min(8,size(samples, 1)), idxs=trunc.(Int, range(1, size(samples, 1), n)), show_svd=true, kwargs...) = if show_svd 
     m = mean(samples, dims=2)
     U, S, V = svd(cov(samples'))
     svd_samples = Diagonal(sqrt.(S)) \ U' * (samples .- m)
-    PairPlots(samples; n=n, show_svd=false, kwargs...) + 
-    PairPlots(svd_samples; n=n, show_svd=false, histogram=false, kwargs...)'
+    PairPlots(samples; idxs=idxs, show_svd=false, kwargs...) + 
+    PairPlots(svd_samples; idxs=idxs, show_svd=false, histogram=false, kwargs...)'
 else 
-    idxs = trunc.(Int, range(1, size(samples, 1), n))
     Figure([
         PairPlot(samples, i, j; kwargs...)
         for j in idxs, i in idxs
     ])
 end
+
+add_description(f, d) = begin 
+    figure_kwargs = f.figure_kwargs
+    plot_title = d
+    plot_title_height = 40 * count("\n", d)
+    size = (figure_kwargs.size[1], figure_kwargs.size[2] + plot_title_height)
+    update(f, figure_kwargs=(
+        f.figure_kwargs..., 
+        plot_title=plot_title,
+        # plot_titlefonthalign=:left, 
+        plot_titlelocation=:left,
+        plot_titlevspan=plot_title_height/size[2],
+        size=size
+    ))
+end
+add_description(d) = Base.Fix2(add_description, d)
 
 end
   
