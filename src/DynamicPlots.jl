@@ -30,6 +30,7 @@ auto_plot_keys(::Plot) = [
     :label, 
     :alpha, :color, :marker, :markersize, :markerstrokewidth,
     :xaxis, :yaxis, :xscale, :yscale, :xlabel, :ylabel,
+    :xlim, :ylim,
     :legend, :colorbar, :title, :plot_title
 ]
 default_plot_kwargs(::Plot) = (label="", markerstrokewidth=0)
@@ -71,9 +72,10 @@ no_cols(what::Figure) = size(what.plots, 2)
 plot_width(what::Figure) = 400
 plot_height(what::Figure) = what.plot_width
 
-auto_figure_keys(::Figure) = [
-    :layout, :size
-]
+auto_figure_keys(f::Figure) = vcat(
+    auto_plot_keys(f),
+    [:layout, :size]
+)
 default_figure_kwargs(what::Figure) = (
     layout=(what.no_rows, what.no_cols), 
     size=(what.no_cols * what.plot_width, what.no_rows * what.plot_height)
