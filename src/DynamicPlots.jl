@@ -47,7 +47,8 @@ plot_kwargs(what::Plot) = merge(
 Base.adjoint(what::Plot) = what
 set_figs_path!(path::AbstractString) = (ENV["DYNAMIC_FIGS"] = path)
 dir(::Plot) = get(ENV, "DYNAMIC_FIGS", joinpath(pwd(), "figs"))
-md_dir(::Plot) = "/figs"
+set_md_path!(path::AbstractString) = (ENV["DYNAMIC_MD"] = path)
+md_dir(::Plot) = get(ENV, "DYNAMIC_MD", "/figs")
 stem(what::Plot) = hash(what)
 extension(what::Plot) = "png"
 Base.basename(what::Plot) = "$(what.stem).$(what.extension)"
