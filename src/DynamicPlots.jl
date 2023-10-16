@@ -124,11 +124,11 @@ func(::Histogram) = histogram!
 plot_args(what::Histogram) = (what.x, )
 
 @dynamic_object Hline <: Plot y::AbstractArray
-func(::Hline) = hline
+func(::Hline) = hline!
 plot_args(what::Hline) = (what.y, )
 
 @dynamic_object Vline <: Plot x::AbstractArray
-func(::Vline) = vline
+func(::Vline) = vline!
 plot_args(what::Vline) = (what.x, )
 
 @dynamic_object EmptyPlot <: Plot x y
