@@ -1,6 +1,6 @@
 module DynamicPlots
 
-export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot 
+export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot, Hline, Vline
 export PairPlot, PairPlots, ECDFPlot
 export add_description
 # export PairPlot
@@ -48,7 +48,7 @@ Base.adjoint(what::Plot) = what
 set_figs_path!(path::AbstractString) = (ENV["DYNAMIC_FIGS"] = path)
 dir(::Plot) = get(ENV, "DYNAMIC_FIGS", joinpath(pwd(), "figs"))
 set_md_path!(path::AbstractString) = (ENV["DYNAMIC_MD"] = path)
-md_dir(::Plot) = get(ENV, "DYNAMIC_MD", "/figs")
+md_dir(::Plot) = get(ENV, "DYNAMIC_MD", "./figs")
 stem(what::Plot) = hash(what)
 extension(what::Plot) = "png"
 Base.basename(what::Plot) = "$(what.stem).$(what.extension)"
@@ -59,7 +59,7 @@ alt_text(what::Plot) = ""
 function markdown(what::Plot)
     if !isfile(what.path)
         mkpath(what.dir)
-        println("Saving $(what.path).")
+        @debug "Saving $(what.path)."
         png(what.figure, what.path)
     end
     Markdown.parse("![$(what.alt_text)]($(what.md_path))")
@@ -122,6 +122,14 @@ plot_args(what::Scatter) = (what.x, what.y)
 @dynamic_object Histogram <: Plot x::AbstractArray
 func(::Histogram) = histogram!
 plot_args(what::Histogram) = (what.x, )
+
+@dynamic_object Hline <: Plot y::AbstractArray
+func(::Hline) = hline
+plot_args(what::Hline) = (what.y, )
+
+@dynamic_object Vline <: Plot x::AbstractArray
+func(::Vline) = vline
+plot_args(what::Vline) = (what.x, )
 
 @dynamic_object EmptyPlot <: Plot x y
 initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, yticks=false)
