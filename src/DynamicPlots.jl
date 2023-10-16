@@ -31,7 +31,7 @@ auto_plot_keys(::Plot) = [
     :alpha, :color, :marker, :markersize, :markerstrokewidth,
     :xaxis, :yaxis, :xscale, :yscale, :xlabel, :ylabel,
     :xlim, :ylim,
-    :legend, :colorbar, :title, :plot_title
+    :legend, :colorbar, :title, :plot_title, :link
 ]
 default_plot_kwargs(::Plot) = (label="", markerstrokewidth=0)
 auto_plot_kwargs(what::Plot) = (;[
@@ -75,11 +75,12 @@ plot_height(what::Figure) = what.plot_width
 
 auto_figure_keys(f::Figure) = vcat(
     auto_plot_keys(f),
-    [:layout, :size]
+    [:layout, :size, :margin]
 )
 default_figure_kwargs(what::Figure) = (
     layout=(what.no_rows, what.no_cols), 
-    size=(what.no_cols * what.plot_width, what.no_rows * what.plot_height)
+    size=(what.no_cols * what.plot_width, what.no_rows * what.plot_height),
+    margin=(10, :mm)
 )
 auto_figure_kwargs(what::Figure) = (;[
     [key, getproperty(what, key)] 
