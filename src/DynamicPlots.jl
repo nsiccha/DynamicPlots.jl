@@ -31,7 +31,7 @@ auto_plot_keys(::Plot) = [
     :alpha, :color, :marker, :markersize, :markerstrokewidth,
     :xaxis, :yaxis, :xscale, :yscale, :xlabel, :ylabel,
     :xlim, :ylim,
-    :legend, :colorbar, :title, :plot_title, :link
+    :legend, :colorbar, :title, :plot_title, :link, :levels, :c, :fillrange
 ]
 default_plot_kwargs(::Plot) = (label="", markerstrokewidth=0)
 auto_plot_kwargs(what::Plot) = (;[
@@ -136,6 +136,10 @@ plot_args(what::Vline) = (what.x, )
 initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, yticks=false)
 
 ECDFPlot(x::AbstractVector; kwargs...) = Line(sort(x), range(0, 1, length(x)); title="ECDF", kwargs...)
+
+@dynamic_object Contourf <: Plot x y z
+func(::Vline) = contourf!
+plot_args(what::Vline) = (what.x, what.y, what.z)
 
 PairPlot(samples::AbstractMatrix, i, j; histogram=true, kwargs...) = if i < j 
     EmptyPlot() + Scatter(samples[i, :], samples[j, :], alpha=.25, kwargs...)
