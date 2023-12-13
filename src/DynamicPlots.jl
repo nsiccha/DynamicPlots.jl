@@ -138,8 +138,8 @@ initial_figure(::EmptyPlot) = plot(xaxis=false, yaxis=false, xticks=false, ytick
 ECDFPlot(x::AbstractVector; kwargs...) = Line(sort(x), range(0, 1, length(x)); title="ECDF", kwargs...)
 
 @dynamic_object Contourf <: Plot x y z
-func(::Vline) = contourf!
-plot_args(what::Vline) = (what.x, what.y, what.z)
+func(::Contourf) = contourf!
+plot_args(what::Contourf) = (what.x, what.y, what.z)
 
 PairPlot(samples::AbstractMatrix, i, j; histogram=true, kwargs...) = if i < j 
     EmptyPlot() + Scatter(samples[i, :], samples[j, :], alpha=.25, kwargs...)
