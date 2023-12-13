@@ -1,6 +1,6 @@
 module DynamicPlots
 
-export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot, Hline, Vline
+export Plot, Figure, Plotter, PlotSum, Line, Scatter, Histogram, EmptyPlot, Hline, Vline, Contourf
 export PairPlot, PairPlots, ECDFPlot
 export add_description
 # export PairPlot
